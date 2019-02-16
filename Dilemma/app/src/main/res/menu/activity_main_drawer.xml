@@ -2,25 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+    >
 
     <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_profile"
             android:icon="@android:drawable/ic_dialog_info"
             android:title="Profile" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_notif"
             android:icon="@android:drawable/ic_dialog_alert"
             android:title="Notifications" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
             android:title="Settings" />
 
     </group>
     <item
-        android:id="@+id/app_bar_switch"
+        android:id="@+id/switch_comments"
         android:icon="@drawable/comment"
         android:title="Show Comments"
         app:actionLayout="@layout/switch_item" />
