@@ -13,9 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    QFeed qf;
+    Question currQ;
+    Button left, right;
+    int i=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +35,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Adds new question", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "asks question" , Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -41,6 +48,32 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        qf = new QFeed();
+        currQ = qf.next();
+
+        TextView q = (TextView) findViewById(R.id.question);
+
+        left = (Button) findViewById(R.id.button_l);
+        left.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                left.setText(currQ.ans1+i);
+                i++;
+            }
+        });
+
+        right = (Button) findViewById(R.id.button_r);
+        right.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                right.setText(currQ.ans2+i);
+                i++;
+            }
+        });
+
+        q.setText(currQ.qstn);
+        left.setText(currQ.ans1);
+        right.setText(currQ.ans2);
+
     }
 
     @Override
@@ -88,4 +121,7 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+
+
+
 }

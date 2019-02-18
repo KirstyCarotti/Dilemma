@@ -25,7 +25,8 @@
             android:name=".SettingsActivity"
             android:label="Settings"
             android:theme="@style/AppTheme.NoActionBar">
-            <!--intent stuff-->
+
+            <!-- intent stuff -->
         </activity>
     </application>
 
