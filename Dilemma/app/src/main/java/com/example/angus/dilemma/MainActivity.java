@@ -25,12 +25,15 @@ public class MainActivity extends AppCompatActivity
     int i=0;
     String buttonText;
 
+    DBHandler db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         //---------STARTUP STUFF---------
 
+        db = new DBHandler(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
