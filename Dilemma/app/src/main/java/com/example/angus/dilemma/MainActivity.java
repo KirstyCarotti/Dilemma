@@ -22,9 +22,8 @@ public class MainActivity extends AppCompatActivity
     QFeed qf;
     Question currQ;
     Button left, right;
-    int i=0;
     String buttonText;
-
+    TextView q;
     DBHandler db;
 
 
@@ -65,23 +64,22 @@ public class MainActivity extends AppCompatActivity
         qf = new QFeed();
         currQ = qf.next();
 
-        TextView q = (TextView) findViewById(R.id.question);
+        q = (TextView) findViewById(R.id.question);
 
         left = (Button) findViewById(R.id.button_l);
         left.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                i++;
-                buttonText = currQ.ans1+i;
-                left.setText(buttonText);
+                //record vote
+                updateQ();
+
             }
         });
 
         right = (Button) findViewById(R.id.button_r);
         right.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                i++;
-                buttonText = currQ.ans2+i;
-                right.setText(buttonText);
+                ///record vote
+                updateQ();
             }
         });
 
@@ -89,6 +87,13 @@ public class MainActivity extends AppCompatActivity
         left.setText(currQ.ans1);
         right.setText(currQ.ans2);
 
+    }
+
+    private void updateQ(){
+        currQ = qf.next();
+        q.setText(currQ.qstn);
+        left.setText(currQ.ans1);
+        right.setText(currQ.ans2);
     }
 
     //----------BACK BUTTON WHEN DRAWER OPEN----------

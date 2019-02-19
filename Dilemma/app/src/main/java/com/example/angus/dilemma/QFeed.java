@@ -2,48 +2,49 @@ package com.example.angus.dilemma;
 
 class QFeed {
 
-    private int index;
-    private Question[] qList;
+    Stack sFirst, sSecond;
     //profile / userID
+    static int index;
 
     //will take in user profile so that appropriate questions are shown
     //eg. dont show own q, don't show answered, filter by tags etc.
     public QFeed(/*int userID*/){
-        //testPop();
-        //populate();
+        sFirst = new Stack();
+        sSecond = new Stack();
+        index = 0;
+        populate();
+        populate();
     }
 
     private void populate(){
-        //add 10 questions to qList
-        //remaining questions to front
-        //reset index to 0
-        //call "pull()" method until qList.length == 10
+
+        sFirst = sSecond;
+        sSecond = new Stack();
+        while(!sSecond.isFull())
+            sSecond.push(pull());
+        //sFirst.pointer=0;
+
     }
 
     public Question next(){
-        //get next question from qList
-        // if(i>=8) populate();
-        //return thing;
-       /* Question q = qList[index];
-        if (index>=8){
-            testPop();
-        }else index++;
 
-        return q;*/
-       return new Question(0, "Text from QFeed", "Left Answer ", "Right Answer ");
-    }
-
-    private /*Question*/ void pull(){
-        //creates Question object from DB
-    }
-
-    public void testPop(){
-        for (int i=0; i<=10;i++){
-            //qList[i]=new Question(i,"Question "+i,"Left "+i,"Right "+i);
-            //TO:DO fix
+        Question q = sFirst.pop();
+        if (q != null) return q;
+        else{
+            populate();
+            return next();
         }
-        index = 0;
     }
+
+    private Question pull(){
+        //creates Question object from DB
+
+        //filler code until db created
+        index++;
+        return new Question(index, "Question no."+index, "Left no."+index, "Right no."+index);
+
+    }
+
 
     //TO:DO add catagory filtered
 
