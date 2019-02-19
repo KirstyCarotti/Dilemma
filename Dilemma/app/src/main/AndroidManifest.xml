@@ -28,6 +28,10 @@
 
             <!-- intent stuff -->
         </activity>
+        <activity
+            android:name=".AskActivity"
+            android:label="Ask a Question"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
