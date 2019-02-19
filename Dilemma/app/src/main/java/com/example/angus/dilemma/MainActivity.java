@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.database.sqlite.SQLiteDatabase;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity
         //---------STARTUP STUFF---------
 
         db = new DBHandler(this);
+        SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
