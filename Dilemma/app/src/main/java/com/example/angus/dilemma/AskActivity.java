@@ -1,5 +1,7 @@
 package com.example.angus.dilemma;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +14,12 @@ public class AskActivity extends AppCompatActivity {
 
     EditText qstn, ans1, ans2;
     Button submit;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = new DBHandler(this).getWritableDatabase();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask);
 
@@ -36,14 +41,25 @@ public class AskActivity extends AppCompatActivity {
 
     private void submitQuestion(){
         //use these to pull text from form:
-        qstn.getText().toString();
-        ans1.getText().toString();
-        ans2.getText().toString();
+        String question = qstn.getText().toString();
+        String answer1 = ans1.getText().toString();
+        String answer2 = ans2.getText().toString();
 
         //add tags too later
-        //get Profile id somehow later
+        int categoryID = 0;
 
-        //update database
+        //get Profile id somehow later
+        int userID = 0;
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("UserID", userID);
+        contentValues.put("Question", question);
+        contentValues.put("Answer1", answer1);
+        contentValues.put("Answer2", answer2);
+        contentValues.put("CategoryID", categoryID);
+
+        // add ID, question, ans1, ans2, category (currently default)
+        db.insert("Question", null, contentValues);
 
         //placeholder action below
         this.finish();

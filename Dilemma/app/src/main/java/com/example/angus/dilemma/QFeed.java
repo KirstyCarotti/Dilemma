@@ -6,8 +6,7 @@ class QFeed {
     private Question[] qList;
     //profile / userID
 
-
-    //will take in uswer profile so that appropriate questions shown
+    //will take in user profile so that appropriate questions are shown
     //eg. dont show own q, don't show answered, filter by tags etc.
     public QFeed(/*int userID*/){
         //testPop();

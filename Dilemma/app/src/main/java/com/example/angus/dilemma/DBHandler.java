@@ -15,6 +15,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "Dilemma";
 
+    /* DB Constructor */
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -23,7 +24,7 @@ public class DBHandler extends SQLiteOpenHelper {
     /* Creates all the tables */
     public void onCreate(SQLiteDatabase db) {
         String sqlUsers = "CREATE TABLE IF NOT EXISTS User(UserID INTEGER, Username TEXT, Email TEXT, Password TEXT, CategoryID	INTEGER, PRIMARY KEY(UserID));";
-        String sqlQuestions = "CREATE TABLE IF NOT EXISTS Question(QuestionID INTEGER, UserID INTEGER, Question TEXT, CategoryID INTEGER, PRIMARY KEY(QuestionID));";
+        String sqlQuestions = "CREATE TABLE IF NOT EXISTS Question(QuestionID INTEGER, UserID INTEGER, Question TEXT, Answer1 TEXT, Answer2 TEXT, CategoryID INTEGER, PRIMARY KEY(QuestionID));";
         String sqlPreferences = "CREATE TABLE IF NOT EXISTS Preferences(UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ShowComment INTEGER, Anonymous INTEGER);";
         String sqlFriend = "CREATE TABLE IF NOT EXISTS Friend(UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, FriendID INTEGER, FOREIGN KEY(FriendID) REFERENCES User);";
         String sqlComment = "CREATE TABLE IF NOT EXISTS Comment(CommentID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, UserID INTEGER, AnswerID INTEGER, CommentDescription TEXT, FOREIGN KEY(UserID) REFERENCES User(UserID), FOREIGN KEY(AnswerID) REFERENCES Answer(AnswerID));";
@@ -39,16 +40,17 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(sqlAnswer);
     }
 
-    public boolean addQuestion(String q){
-        return true;
-    }
-
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + FeedReaderContract.FeedEntry.TABLE_NAME;
+    // stuff below needs tweaking, no longer need feedreader ? ----------------
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SQL_DELETE_ENTRIES);
+        db.execSQL("DROP TABLE IF EXISTS Users");
+        db.execSQL("DROP TABLE IF EXISTS Question");
+        db.execSQL("DROP TABLE IF EXISTS Preferences");
+        db.execSQL("DROP TABLE IF EXISTS Friend");
+        db.execSQL("DROP TABLE IF EXISTS Comment");
+        db.execSQL("DROP TABLE IF EXISTS Category");
+        db.execSQL("DROP TABLE IF EXISTS Answer");
         onCreate(db);
     }
 
