@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity
     Question currQ;
     Button left, right;
     int i=0;
+    String buttonText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +59,18 @@ public class MainActivity extends AppCompatActivity
         left = (Button) findViewById(R.id.button_l);
         left.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                left.setText(currQ.ans1+i);
                 i++;
+                buttonText = currQ.ans1+i;
+                left.setText(buttonText);
             }
         });
 
         right = (Button) findViewById(R.id.button_r);
         right.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                right.setText(currQ.ans2+i);
                 i++;
+                buttonText = currQ.ans2+i;
+                right.setText(buttonText);
             }
         });
 
