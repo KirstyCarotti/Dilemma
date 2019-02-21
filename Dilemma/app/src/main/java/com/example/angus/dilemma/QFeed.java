@@ -41,7 +41,22 @@ class QFeed {
 
         //filler code until db created
         index++;
-        return new Question(index, "Question no."+index, "Left no."+index, "Right no."+index);
+
+        //replace code with query on each line after comment
+        return new Question(
+
+                //Question ID
+                index,
+
+                //Question Text
+                "Question no."+index,
+
+                //Left text
+                "Left no."+index,
+
+                //Right Text
+                "Right no."+index
+        );
 
     }
 
