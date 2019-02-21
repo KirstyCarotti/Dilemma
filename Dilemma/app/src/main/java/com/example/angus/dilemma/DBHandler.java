@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.MatrixCursor;
 import android.database.SQLException;
+import android.content.ContentValues;
 import android.util.Log;
 import java.util.ArrayList;
 
@@ -22,13 +23,13 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     /* Creates all the tables */
     public void onCreate(SQLiteDatabase db) {
-        String sqlUsers = "CREATE TABLE User(_UserID INTEGER, Username TEXT, Email TEXT, Password TEXT, _CategoryID INTEGER, PRIMARY KEY(_UserID));";
-        String sqlQuestions = "CREATE TABLE Question(_QuestionID INTEGER, _UserID INTEGER, Question TEXT, _CategoryID INTEGER, PRIMARY KEY(_QuestionID));";
-        String sqlPreferences = "CREATE TABLE Preferences(_UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ShowComment INTEGER, Anonymous INTEGER);";
-        String sqlFriend = "CREATE TABLE Friend(_UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _FriendID INTEGER, FOREIGN KEY(_FriendID) REFERENCES User);";
-        String sqlComment = "CREATE TABLE Comment(_CommentID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _UserID INTEGER, _AnswerID INTEGER, CommentDescription TEXT, FOREIGN KEY(_UserID) REFERENCES User(_UserID), FOREIGN KEY(_AnswerID) REFERENCES Answer(_AnswerID));";
-        String sqlCategory = "CREATE TABLE Category(_CategoryID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, CategoryName TEXT);";
-        String sqlAnswer = "CREATE TABLE Answer(_AnswerID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _QuestionID INTEGER, AnswerText TEXT, NoOfClicks INTEGER, FOREIGN KEY(_QuestionID) REFERENCES Question(_QuestionID));";
+        String sqlUsers = "CREATE TABLE IF NOT EXISTS User(_UserID INTEGER, Username TEXT, Email TEXT, Password TEXT, _CategoryID INTEGER, PRIMARY KEY(_UserID));";
+        String sqlQuestions = "CREATE TABLE IF NOT EXISTS Question(_QuestionID INTEGER, _UserID INTEGER, Question TEXT, _CategoryID INTEGER, PRIMARY KEY(_QuestionID));";
+        String sqlPreferences = "CREATE TABLE IF NOT EXISTS Preferences(_UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ShowComment INTEGER, Anonymous INTEGER);";
+        String sqlFriend = "CREATE TABLE IF NOT EXISTS Friend(_UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _FriendID INTEGER, FOREIGN KEY(_FriendID) REFERENCES User);";
+        String sqlComment = "CREATE TABLE IF NOT EXISTS Comment(_CommentID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _UserID INTEGER, _AnswerID INTEGER, CommentDescription TEXT, FOREIGN KEY(_UserID) REFERENCES User(_UserID), FOREIGN KEY(_AnswerID) REFERENCES Answer(_AnswerID));";
+        String sqlCategory = "CREATE TABLE IF NOT EXISTS Category(_CategoryID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, CategoryName TEXT);";
+        String sqlAnswer = "CREATE TABLE IF NOT EXISTS Answer(_AnswerID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _QuestionID INTEGER, AnswerText TEXT, NoOfClicks INTEGER, FOREIGN KEY(_QuestionID) REFERENCES Question(_QuestionID));";
 
         db.execSQL(sqlUsers);
         db.execSQL(sqlQuestions);
@@ -38,6 +39,24 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(sqlCategory);
         db.execSQL(sqlAnswer);
         Log.d("Create Database:", "Successful");
+    }
+
+    // created dummy questions (no longer in use) -------------
+    public void createDummyQuestions(SQLiteDatabase db){
+        String answer1 = "INSERT INTO Question(_UserID,Question,_CategoryID) VALUES (1,'Do you like bananas?',1)";
+        String answer2 = "INSERT INTO Question(_UserID,Question,_CategoryID) VALUES (1,'Do you like mangos?',1)";
+        String answer3 = "INSERT INTO Question(_UserID,Question,_CategoryID) VALUES (1,'Do you like fruit?',1)";
+        db.execSQL(answer1); db.execSQL(answer2); db.execSQL(answer3);
+
+        Log.d("Create dummy methods:", "Successful");
+    }
+
+    public void dummyDelete(SQLiteDatabase db){
+        String delete = "DELETE FROM Question";
+        String delete2 = "DELETE FROM Answer";
+        db.execSQL(delete);
+        db.execSQL(delete2);
+
     }
 
     // stuff below needs tweaking, no longer need feedreader ? ----------------

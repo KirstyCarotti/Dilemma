@@ -52,19 +52,21 @@ public class AskActivity extends AppCompatActivity {
         int userID = 0;
 
         ContentValues qValues = new ContentValues();
-        qValues.put("UserID", userID);
+        qValues.put("_UserID", userID);
         qValues.put("Question", question);
-        qValues.put("CategoryID", categoryID);
+        qValues.put("_CategoryID", categoryID);
 
         // add ID, question, ans1, ans2, category (currently default)
-        db.insert("Question", null, qValues);
+        long questionID = db.insert("Question", null, qValues);
 
         ContentValues a1Values = new ContentValues();
-        a1Values.put("Answer", answerText1);
+        a1Values.put("AnswerText", answerText1);
+        a1Values.put("_QuestionID", questionID);
         db.insert("Answer", null, a1Values);
 
         ContentValues a2Values = new ContentValues();
-        a2Values.put("Answer", answerText2);
+        a2Values.put("AnswerText", answerText2);
+        a2Values.put("_QuestionID", questionID);
         db.insert("Answer", null, a2Values);
 
         //placeholder action below

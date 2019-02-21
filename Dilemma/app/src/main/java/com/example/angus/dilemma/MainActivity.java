@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity
         db = new DBHandler(this);
         SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
 
+        //db.createDummyQuestions(sqLiteDatabase);
+        db.dummyDelete(sqLiteDatabase);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
