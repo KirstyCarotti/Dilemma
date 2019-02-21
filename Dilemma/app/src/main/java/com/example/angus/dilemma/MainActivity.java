@@ -17,13 +17,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
 
-public class MainActivity extends AppCompatActivity
+public class
+MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     QFeed qf;
     Question currQ;
     Button left, right;
-    String buttonText;
     TextView q;
     DBHandler db;
 
@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
+
+        if(true/*logged in */){
+            startActivity(new Intent(this, LoginActivity.class));
+        }
 
         qf = new QFeed();
         currQ = qf.next();
