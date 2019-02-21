@@ -23,7 +23,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     /* Creates all the tables */
     public void onCreate(SQLiteDatabase db) {
-        String sqlUsers = "CREATE TABLE IF NOT EXISTS User(_UserID INTEGER, Username TEXT, Email TEXT, Password TEXT, _CategoryID INTEGER, PRIMARY KEY(_UserID));";
+        String sqlUsers = "CREATE TABLE IF NOT EXISTS User(_UserID INTEGER, Username TEXT, Password TEXT, _CategoryID INTEGER, PRIMARY KEY(_UserID));";
         String sqlQuestions = "CREATE TABLE IF NOT EXISTS Question(_QuestionID INTEGER, _UserID INTEGER, Question TEXT, _CategoryID INTEGER, PRIMARY KEY(_QuestionID));";
         String sqlPreferences = "CREATE TABLE IF NOT EXISTS Preferences(_UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, ShowComment INTEGER, Anonymous INTEGER);";
         String sqlFriend = "CREATE TABLE IF NOT EXISTS Friend(_UserID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, _FriendID INTEGER, FOREIGN KEY(_FriendID) REFERENCES User);";
