@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity
         SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
 
         //db.createDummyQuestions(sqLiteDatabase);
-        db.dummyDelete(sqLiteDatabase);
+        //db.dummyDelete(sqLiteDatabase);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
