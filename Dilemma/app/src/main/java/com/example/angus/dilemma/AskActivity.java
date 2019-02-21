@@ -42,8 +42,8 @@ public class AskActivity extends AppCompatActivity {
     private void submitQuestion(){
         //use these to pull text from form:
         String question = qstn.getText().toString();
-        String answer1 = ans1.getText().toString();
-        String answer2 = ans2.getText().toString();
+        String answerText1 = ans1.getText().toString();
+        String answerText2 = ans2.getText().toString();
 
         //add tags too later
         int categoryID = 0;
@@ -51,15 +51,21 @@ public class AskActivity extends AppCompatActivity {
         //get Profile id somehow later
         int userID = 0;
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("UserID", userID);
-        contentValues.put("Question", question);
-        contentValues.put("Answer1", answer1);
-        contentValues.put("Answer2", answer2);
-        contentValues.put("CategoryID", categoryID);
+        ContentValues qValues = new ContentValues();
+        qValues.put("UserID", userID);
+        qValues.put("Question", question);
+        qValues.put("CategoryID", categoryID);
 
         // add ID, question, ans1, ans2, category (currently default)
-        db.insert("Question", null, contentValues);
+        db.insert("Question", null, qValues);
+
+        ContentValues a1Values = new ContentValues();
+        a1Values.put("Answer", answerText1);
+        db.insert("Answer", null, a1Values);
+
+        ContentValues a2Values = new ContentValues();
+        a2Values.put("Answer", answerText2);
+        db.insert("Answer", null, a2Values);
 
         //placeholder action below
         this.finish();
