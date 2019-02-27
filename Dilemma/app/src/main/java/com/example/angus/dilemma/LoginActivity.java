@@ -91,9 +91,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() { //do we even let them press back? regardless userID if done so becomes -1 so can easily see when no logged in
-        setResult(RESULT_CANCELED, new Intent());
-        super.onBackPressed();
+    public void onBackPressed() {
+        //do we even let them press back? regardless userID if done so becomes -1 so can easily see when no logged in
+        //un-comment below code to allow no login
+
+        //setResult(RESULT_CANCELED, new Intent());
+        //super.onBackPressed();
+
     }
 
     //again like in main, handles different activity results

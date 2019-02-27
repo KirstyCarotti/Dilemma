@@ -28,6 +28,7 @@ MainActivity extends AppCompatActivity
     TextView q;
     DBHandler db;
     public static final int LOGIN_RESULT = 1;
+    public static final int ASK_RESULT = 2;
     int userID;
     TextView username;
 
@@ -54,7 +55,9 @@ MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), AskActivity.class));
+                Intent intent = new Intent(view.getContext(), AskActivity.class);
+                intent.putExtra("userID", userID);
+                startActivityForResult(intent, ASK_RESULT);
             }
         });
 
@@ -154,6 +157,10 @@ MainActivity extends AppCompatActivity
             //
         } else if (id == R.id.nav_notif) {
 
+        } else if (id == R.id.logout) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, LOGIN_RESULT);
+
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         }
@@ -173,11 +180,34 @@ MainActivity extends AppCompatActivity
         switch(requestCode){
             case LOGIN_RESULT:
                 if (resultCode == RESULT_OK){
-                    username.setText(data.getStringExtra("username"));
-                    userID = data.getIntExtra("userID", -1);
-                }//else not logged in
+                    //username.setText(data.getStringExtra("username"));
+                    //userID = data.getIntExtra("userID", -1);
+                }else{
+                    Snackbar login_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.login_fail, Snackbar.LENGTH_INDEFINITE);
+                    login_fail.setAction("LOGIN", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(v.getContext(), LoginActivity.class);
+                            startActivityForResult(intent, LOGIN_RESULT);
+                        }
+                    });
+                    login_fail.show();
+                }
                 break;
-            //case ASK_RESULT:  - ask page returns a pointer maybe to show the question once asked
+            case ASK_RESULT:
+                if (resultCode == RESULT_OK){
+                    Snackbar ask = Snackbar.make(findViewById(R.id.drawer_layout), R.string.confirmation, Snackbar.LENGTH_SHORT );
+                    ask.setAction("SHOW", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //go to question
+                        }
+                    });
+                    ask.show();
+                }else {
+                    Snackbar ask_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.discard, Snackbar.LENGTH_SHORT );
+                    ask_fail.show();
+                }
         }
     }
 }
