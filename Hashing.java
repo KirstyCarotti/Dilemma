@@ -22,6 +22,14 @@ public class Hashing{
 		print(hash);
 	}
 
+	public Hashing(String plain_Pass, byte[] salt) throws InvalidKeySpecException, NoSuchAlgorithmException{
+		KeySpec spec = new PBEKeySpec(plain_Pass.toCharArray(), salt, 65536, 128);
+		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+
+		byte[] hash = factory.generateSecret(spec).getEncoded();
+		print(hash);
+	}
+
 
 	private void print(byte[] s) {
 
