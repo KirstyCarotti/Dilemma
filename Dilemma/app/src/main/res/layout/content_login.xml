@@ -42,7 +42,9 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/redText" />
+        app:layout_constraintTop_toBottomOf="@+id/redText"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null"/>
 
     <EditText
         android:id="@+id/password"
@@ -55,7 +57,9 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null"/>
 
     <Button
         android:id="@+id/login"

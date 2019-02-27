@@ -44,7 +44,6 @@ public class AskActivity extends AppCompatActivity {
         String question = qstn.getText().toString();
         String answerText1 = ans1.getText().toString();
         String answerText2 = ans2.getText().toString();
-
         //add tags too later
         int categoryID = 0;
 

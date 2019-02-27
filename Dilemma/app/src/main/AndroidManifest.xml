@@ -12,6 +12,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".RegisterActivity"
+            android:label="Register"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".LoginActivity"
             android:label="Log in"
             android:theme="@style/AppTheme.NoActionBar" />

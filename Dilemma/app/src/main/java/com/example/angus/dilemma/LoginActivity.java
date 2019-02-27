@@ -1,5 +1,7 @@
 package com.example.angus.dilemma;
 
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +18,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText username, password;
     TextView error;
+    private static final int REGISTER_RESULT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_l);
         setSupportActionBar(toolbar);
 
+        //linking layout elements
+
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
         error = (TextView) findViewById(R.id.redText);
@@ -33,7 +38,16 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkLogin()) finish();
+                if(checkLogin()) {
+
+                    Intent intent = new Intent();
+                    intent.putExtra("username", username.getText().toString());
+                    //userID = LOOKUP UserID AND RETURN HERE
+                    intent.putExtra("userID", /*userID*/ 0 );
+                    setResult(RESULT_OK, intent);
+
+                    finish();
+                }
             }
         });
 
@@ -41,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //open register page
+                openRegister();
             }
         });
 
@@ -58,19 +72,40 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void openRegister(){
+        startActivityForResult(new Intent(this, RegisterActivity.class), REGISTER_RESULT);
+    }
+
     private boolean checkLogin(){
         //check login matches db
 
+        //DB PUT QUERY IN IF STATEMENT BELOW
         if (!username.getText().toString().equals("") && !password.getText().toString().equals("")
                 /*for now successful login = any input*/){
-
             return true;
-            //figure out how to pass successful login to main activity
-
         }else{
             error.setText("INVALID LOGIN DETAILS");
             password.setText("");
             return false;
+        }
+    }
+
+    @Override
+    public void onBackPressed() { //do we even let them press back? regardless userID if done so becomes -1 so can easily see when no logged in
+        setResult(RESULT_CANCELED, new Intent());
+        super.onBackPressed();
+    }
+
+    //again like in main, handles different activity results
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case REGISTER_RESULT:
+                if (resultCode == RESULT_OK){
+                    username.setText(data.getStringExtra("user"));
+                }
         }
     }
 }

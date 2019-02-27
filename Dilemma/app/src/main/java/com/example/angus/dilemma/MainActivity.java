@@ -2,6 +2,7 @@ package com.example.angus.dilemma;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -26,6 +27,9 @@ MainActivity extends AppCompatActivity
     Button left, right;
     TextView q;
     DBHandler db;
+    public static final int LOGIN_RESULT = 1;
+    int userID;
+    TextView username;
 
 
     @Override
@@ -65,11 +69,16 @@ MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
+        //-------------login stuff here -------------
+
+        username = (TextView) findViewById(R.id.username);
 
         if(true/*logged in */){
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, LOGIN_RESULT);
         }
+
+        //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
 
         qf = new QFeed();
         currQ = qf.next();
@@ -154,5 +163,21 @@ MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
         return true;
+    }
+
+    //switch code to handle any return values from opening pages
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case LOGIN_RESULT:
+                if (resultCode == RESULT_OK){
+                    username.setText(data.getStringExtra("username"));
+                    userID = data.getIntExtra("userID", -1);
+                }//else not logged in
+                break;
+            //case ASK_RESULT:  - ask page returns a pointer maybe to show the question once asked
+        }
     }
 }
