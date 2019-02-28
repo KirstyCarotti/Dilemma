@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 public class RegisterActivity extends AppCompatActivity {
 
     EditText email, usern, pass1, pass2;
@@ -103,11 +106,20 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     //Puts valid details into DB
-    private void registerUser(){
+    private void registerUser() throws NoSuchAlgorithmException, InvalidKeySpecException {
         //get stuff into DB
         email.getText().toString();
         usern.getText().toString();
-        pass1.getText().toString();
+
+
+        Hashing hashed = new Hashing( pass1.getText().toString());
+        String salt =hashed.getSalt().toString();
+        String hashPass=hashed.getHash().toString();
+
+
+
+
+
 
     }
 }
