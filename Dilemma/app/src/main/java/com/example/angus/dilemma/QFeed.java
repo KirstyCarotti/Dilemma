@@ -1,7 +1,10 @@
 package com.example.angus.dilemma;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteOpenHelper;
 
 class QFeed {
 
@@ -9,13 +12,16 @@ class QFeed {
     //profile / userID
     static int index;
     SQLiteDatabase db;
+    String[] qColumns = {"_QuestionID", "Question"};
+    String[] aColumns = {"AnswerText"};
 
     //will take in user profile so that appropriate questions are shown
     //eg. dont show own q, don't show answered, filter by tags etc.
     public QFeed(SQLiteDatabase db){
+
         sFirst = new Stack();
         sSecond = new Stack();
-        db = db;
+        this.db = db;
         index = 0;
         populate();
         populate();
@@ -46,29 +52,56 @@ class QFeed {
 
         //filler code until db created
         index++;
-        int count = 1;
-        String newQuestion = "SELECT Question.Question, Answer.AnswerText FROM Question INNER JOIN Answer ON Answer._QuestionID = Question._QuestionID WHERE Question._QuestionID = " + count;
-        db.execSQL(newQuestion);
 
-        count++;
+        Cursor questionCursor = db.query("Question", // a. table
+                 qColumns, // b. column names
+                "_QuestionID = " + index, // c. selections
+                null,
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
 
-        Log.d("PRINTED:", newQuestion);
+        if (!questionCursor.isAfterLast()) {
+            questionCursor.moveToFirst();
+            Log.d("QUESTION PRINTED:", questionCursor.getInt(0) + questionCursor.getString(1));
+        } else {
+            return null;
+        }
+
+        int qID = questionCursor.getInt(0);
+
+        Cursor answerCursor = db.query("Answer", // a. table
+                 aColumns, // b. column names
+                "_QuestionID = " + qID, // c. selections
+                null,
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        answerCursor.moveToFirst();
+        String answer1 = answerCursor.getString(0);
+        Log.d("ANSWER PRINTED:", answer1);
+
+        answerCursor.moveToNext();
+        String answer2 = answerCursor.getString(0);
+        Log.d("ANSWER PRINTED:", answer2);
 
         //replace code with query on each line after comment
         return new Question(
-
 
                 //Question ID
                 index,
 
                 //Question Text
-                "Question no."+index,
+                questionCursor.getString(1),
 
-                //Left text
-                "Left no."+index,
+                //Answer 1
+                answer1,
 
-                //Right Text
-                "Right no."+index
+                //Answer 2
+                answer2
         );
 
     }
