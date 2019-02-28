@@ -39,7 +39,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkFields()){
-                    registerUser();
+                    try {
+                        registerUser();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (InvalidKeySpecException e) {
+                        e.printStackTrace();
+                    }
 
                     Intent intent = new Intent();
                     intent.putExtra("user", usern.getText().toString());
