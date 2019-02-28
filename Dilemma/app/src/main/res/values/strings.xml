@@ -16,6 +16,7 @@
     <string name="question_text">Loading Question</string>
     <string name="ans_left">Left Answer</string>
     <string name="ans_right">Right Answer</string>
+    <string name="login_fail">You are not logged in</string>
 
     <!--Settings page-->
     <string name="settings_text">Settings Go Here</string>
@@ -25,5 +26,7 @@
     <string name="example_question">What is your favourite colour?</string>
     <string name="example_ans_left">Red</string>
     <string name="example_ans_right">Blue</string>
+    <string name="confirmation">Your Question has been posted!</string>
+    <string name="discard">Question discarded</string>
 
 </resources>

@@ -2,6 +2,7 @@ package com.example.angus.dilemma;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -17,15 +18,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
 
-public class MainActivity extends AppCompatActivity
+public class
+MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     QFeed qf;
     Question currQ;
     Button left, right;
-    String buttonText;
     TextView q;
     DBHandler db;
+    public static final int LOGIN_RESULT = 1;
+    public static final int ASK_RESULT = 2;
+    int userID;
+    TextView username;
 
 
     @Override
@@ -50,7 +55,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(view.getContext(), AskActivity.class));
+                Intent intent = new Intent(view.getContext(), AskActivity.class);
+                intent.putExtra("userID", userID);
+                startActivityForResult(intent, ASK_RESULT);
             }
         });
 
@@ -64,6 +71,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //-------------login stuff here -------------
+
+        username = (TextView) findViewById(R.id.username);
+
+        if(true/*logged in */){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, LOGIN_RESULT);
+        }
 
         //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
 
@@ -141,6 +157,10 @@ public class MainActivity extends AppCompatActivity
             //
         } else if (id == R.id.nav_notif) {
 
+        } else if (id == R.id.logout) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, LOGIN_RESULT);
+
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
         }
@@ -150,5 +170,44 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
         return true;
+    }
+
+    //switch code to handle any return values from opening pages
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case LOGIN_RESULT:
+                if (resultCode == RESULT_OK){
+                    //username.setText(data.getStringExtra("username"));
+                    //userID = data.getIntExtra("userID", -1);
+                }else{
+                    Snackbar login_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.login_fail, Snackbar.LENGTH_INDEFINITE);
+                    login_fail.setAction("LOGIN", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(v.getContext(), LoginActivity.class);
+                            startActivityForResult(intent, LOGIN_RESULT);
+                        }
+                    });
+                    login_fail.show();
+                }
+                break;
+            case ASK_RESULT:
+                if (resultCode == RESULT_OK){
+                    Snackbar ask = Snackbar.make(findViewById(R.id.drawer_layout), R.string.confirmation, Snackbar.LENGTH_SHORT );
+                    ask.setAction("SHOW", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //go to question
+                        }
+                    });
+                    ask.show();
+                }else {
+                    Snackbar ask_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.discard, Snackbar.LENGTH_SHORT );
+                    ask_fail.show();
+                }
+        }
     }
 }

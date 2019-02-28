@@ -1,6 +1,7 @@
 package com.example.angus.dilemma;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,6 @@ public class AskActivity extends AppCompatActivity {
         String question = qstn.getText().toString();
         String answerText1 = ans1.getText().toString();
         String answerText2 = ans2.getText().toString();
-
         //add tags too later
         int categoryID = 0;
 
@@ -70,6 +70,9 @@ public class AskActivity extends AppCompatActivity {
         db.insert("Answer", null, a2Values);
 
         //placeholder action below
+        Intent intent = new Intent();
+        intent.putExtra("questionID", questionID);
+        setResult(RESULT_OK, intent);
         this.finish();
     }
 
