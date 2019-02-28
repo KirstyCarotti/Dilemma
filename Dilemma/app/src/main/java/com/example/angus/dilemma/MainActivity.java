@@ -83,7 +83,7 @@ MainActivity extends AppCompatActivity
 
         //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
 
-        qf = new QFeed();
+        qf = new QFeed(sqLiteDatabase);
         currQ = qf.next();
 
         q = (TextView) findViewById(R.id.question);
