@@ -105,17 +105,25 @@ MainActivity extends AppCompatActivity
             }
         });
 
-        q.setText(currQ.qstn);
-        left.setText(currQ.ans1);
-        right.setText(currQ.ans2);
-
+        displayQ();
     }
 
     private void updateQ(){
         currQ = qf.next();
-        q.setText(currQ.qstn);
-        left.setText(currQ.ans1);
-        right.setText(currQ.ans2);
+        displayQ();
+    }
+
+    private void displayQ(){
+        if(currQ.qstnID!=-1){
+            q.setText(currQ.qstn);
+            left.setText(currQ.ans1);
+            right.setText(currQ.ans2);
+        }else{
+            q.setText("No Available Questions");
+            left.setText("Refresh");
+            right.setText("Refresh");
+            qf.refresh();
+        }
     }
 
     //----------BACK BUTTON WHEN DRAWER OPEN----------

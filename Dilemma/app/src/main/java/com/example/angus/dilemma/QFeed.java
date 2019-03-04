@@ -37,8 +37,12 @@ class QFeed {
 
     }
 
-    public Question next(){
+    public void refresh(){
+        populate();
+        populate();
+    }
 
+    public Question next(){
         Question q = sFirst.pop();
         if (q != null) return q;
         else {
@@ -49,8 +53,13 @@ class QFeed {
 
     private Question pull(){
         //creates Question object from DB
-
         //filler code until db created
+
+        boolean empty = true;
+
+
+        if (empty) return new Question(-1, null, null, null);
+
         index++;
 
         Cursor questionCursor = db.query("Question", // a. table
@@ -66,7 +75,7 @@ class QFeed {
             questionCursor.moveToFirst();
             Log.d("QUESTION PRINTED:", questionCursor.getInt(0) + questionCursor.getString(1));
         } else {
-            return null;
+            return new Question(-1, null, null, null);
         }
 
         int qID = questionCursor.getInt(0);
@@ -87,6 +96,7 @@ class QFeed {
         answerCursor.moveToNext();
         String answer2 = answerCursor.getString(0);
         Log.d("ANSWER PRINTED:", answer2);
+
 
         //replace code with query on each line after comment
         return new Question(
