@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.CardView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,8 +17,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
+import android.view.View.OnTouchListener;
 
 public class
 MainActivity extends AppCompatActivity
@@ -31,6 +35,11 @@ MainActivity extends AppCompatActivity
     public static final int ASK_RESULT = 2;
     int userID;
     TextView username;
+
+    CardView card;
+    RelativeLayout r_layout;
+    private float xDelta;
+    private float yDelta;
 
 
     @Override
@@ -105,17 +114,30 @@ MainActivity extends AppCompatActivity
             }
         });
 
-        q.setText(currQ.qstn);
-        left.setText(currQ.ans1);
-        right.setText(currQ.ans2);
 
+        r_layout = (RelativeLayout) findViewById(R.id.r_layout);
+        card = (CardView) findViewById(R.id.cardView);
+        card.setOnTouchListener(onTouchListener());
+
+        displayQ();
     }
 
     private void updateQ(){
         currQ = qf.next();
-        q.setText(currQ.qstn);
-        left.setText(currQ.ans1);
-        right.setText(currQ.ans2);
+        displayQ();
+    }
+
+    private void displayQ(){
+        if(currQ.qstnID!=-1){
+            q.setText(currQ.qstn);
+            left.setText(currQ.ans1);
+            right.setText(currQ.ans2);
+        }else{
+            q.setText("No Available Questions");
+            left.setText("Refresh");
+            right.setText("Refresh");
+            qf.refresh();
+        }
     }
 
     //----------BACK BUTTON WHEN DRAWER OPEN----------
@@ -170,6 +192,33 @@ MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
         return true;
+    }
+
+    private OnTouchListener onTouchListener() {
+        return new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+                        xDelta = view.getX() - event.getRawX();
+                        yDelta = view.getY() - event.getRawY();
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        view.animate()
+                                .x(event.getRawX() + xDelta)
+                                .y(event.getRawY() + yDelta)
+                                .setDuration(0)
+                                .start();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        };
     }
 
     //switch code to handle any return values from opening pages
