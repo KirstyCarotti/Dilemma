@@ -14,6 +14,11 @@ class QFeed {
     SQLiteDatabase db;
     String[] qColumns = {"_QuestionID", "Question"};
     String[] aColumns = {"AnswerText"};
+    Cursor answerCursor;
+    Cursor questionCursor;
+    int qID = -1;
+    String qText;
+    boolean empty = false;
 
     //will take in user profile so that appropriate questions are shown
     //eg. dont show own q, don't show answered, filter by tags etc.
@@ -23,8 +28,22 @@ class QFeed {
         sSecond = new Stack();
         this.db = db;
         index = 0;
+
+        questionCursor = db.query("Question", // a. table
+                qColumns, // b. column names
+                null, // c. selections
+                null,
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        questionCursor.moveToFirst();
+
         populate();
         populate();
+
+
     }
 
     private void populate(){
@@ -55,39 +74,19 @@ class QFeed {
         //creates Question object from DB
         //filler code until db created
 
-        boolean empty = true;
-
-
-        if (empty) return new Question(-1, null, null, null);
-
         index++;
 
-        Cursor questionCursor = db.query("Question", // a. table
-                 qColumns, // b. column names
-                "_QuestionID = " + index, // c. selections
-                null,
-                null, // e. group by
-                null, // f. having
-                null, // g. order by
-                null); // h. limit
+        if(!empty) {
+            qID = questionCursor.getInt(0);
+            qText = questionCursor.getString(1);
+            Log.d("QUESTION PRINTED:", qID + qText);
+        } else return new Question(-1,null,null,null);
 
-        if (!questionCursor.isAfterLast()) {
-            questionCursor.moveToFirst();
-            Log.d("QUESTION PRINTED:", questionCursor.getInt(0) + questionCursor.getString(1));
-        } else {
-            return new Question(-1, null, null, null);
-        }
+        if (!questionCursor.isLast()) {
+            questionCursor.moveToNext();
+        } else empty = true;
 
-        int qID = questionCursor.getInt(0);
-
-        Cursor answerCursor = db.query("Answer", // a. table
-                 aColumns, // b. column names
-                "_QuestionID = " + qID, // c. selections
-                null,
-                null, // e. group by
-                null, // f. having
-                null, // g. order by
-                null); // h. limit
+        answerCursor = db.rawQuery("SELECT AnswerText FROM Answer WHERE _QuestionID = ?", new String[] {qID+ ""});
 
         answerCursor.moveToFirst();
         String answer1 = answerCursor.getString(0);
@@ -105,7 +104,7 @@ class QFeed {
                 index,
 
                 //Question Text
-                questionCursor.getString(1),
+                qText,
 
                 //Answer 1
                 answer1,
