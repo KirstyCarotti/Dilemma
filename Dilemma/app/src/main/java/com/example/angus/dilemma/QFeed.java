@@ -15,7 +15,7 @@ class QFeed {
     public QFeed(SQLiteDatabase db){
         sFirst = new Stack();
         sSecond = new Stack();
-        db = db;
+        this.db = db;
         index = 0;
         populate();
         populate();
