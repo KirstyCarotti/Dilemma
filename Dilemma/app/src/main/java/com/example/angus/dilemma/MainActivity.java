@@ -34,7 +34,7 @@ MainActivity extends AppCompatActivity
     public static final int LOGIN_RESULT = 1;
     public static final int ASK_RESULT = 2;
     int userID;
-    TextView username;
+    String username = "";
 
     CardView card;
     RelativeLayout r_layout;
@@ -83,12 +83,14 @@ MainActivity extends AppCompatActivity
 
         //-------------login stuff here -------------
 
-        username = (TextView) findViewById(R.id.username);
+        //TextView sb_username = (TextView) findViewById(R.id.sidebar_un);
 
         if(true/*logged in */){
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, LOGIN_RESULT);
         }
+
+
 
         //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
 
@@ -229,7 +231,7 @@ MainActivity extends AppCompatActivity
         switch(requestCode){
             case LOGIN_RESULT:
                 if (resultCode == RESULT_OK){
-                    //username.setText(data.getStringExtra("username"));
+                    //username=(data.getStringExtra("username"));
                     //userID = data.getIntExtra("userID", -1);
                 }else{
                     Snackbar login_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.login_fail, Snackbar.LENGTH_INDEFINITE);

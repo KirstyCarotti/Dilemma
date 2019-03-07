@@ -40,6 +40,8 @@ class QFeed {
 
         questionCursor.moveToFirst();
 
+        if(questionCursor.getCount()==0)empty = true;
+
         populate();
         populate();
 
