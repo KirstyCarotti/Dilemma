@@ -1,6 +1,7 @@
 package com.example.angus.dilemma;
 
 import android.content.Intent;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,7 @@ MainActivity extends AppCompatActivity
     Button left, right;
     TextView q;
     DBHandler db;
+    boolean dbSuccess = false;
     public static final int LOGIN_RESULT = 1;
     public static final int ASK_RESULT = 2;
     int userID;
@@ -94,10 +96,9 @@ MainActivity extends AppCompatActivity
 
         //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
 
-        qf = new QFeed(sqLiteDatabase);
-        currQ = qf.next();
 
         q = (TextView) findViewById(R.id.question);
+
 
         left = (Button) findViewById(R.id.button_l);
         left.setOnClickListener(new View.OnClickListener() {
@@ -121,24 +122,51 @@ MainActivity extends AppCompatActivity
         card = (CardView) findViewById(R.id.cardView);
         card.setOnTouchListener(onTouchListener());
 
+        dbSuccess = qfInit(sqLiteDatabase);
+        if (!dbSuccess){
+            dbSuccess = qfInit(sqLiteDatabase);
+        }
+
         displayQ();
+    }
+
+    private boolean qfInit(SQLiteDatabase sqLiteDatabase){
+
+        try{
+            qf = new QFeed(sqLiteDatabase);
+            currQ = qf.next();
+
+            return true;
+        }catch (SQLException e){
+            db.onUpgrade(sqLiteDatabase, 0,0);
+
+            return false;
+        }
     }
 
     private void updateQ(){
-        currQ = qf.next();
-        displayQ();
+        if (dbSuccess){
+            currQ = qf.next();
+            displayQ();
+        }
+        else currQ = new Question(-1,null,null,null);
+
     }
 
     private void displayQ(){
-        if(currQ.qstnID!=-1){
+        if(dbSuccess&&currQ.qstnID!=-1){
             q.setText(currQ.qstn);
             left.setText(currQ.ans1);
             right.setText(currQ.ans2);
-        }else{
+        }else if (dbSuccess){
             q.setText("No Available Questions");
             left.setText("Refresh");
             right.setText("Refresh");
             qf.refresh();
+        } else{
+            q.setText("SQLITE EXCEPTION");
+            left.setText("KILL");
+            right.setText("ME");
         }
     }
 
