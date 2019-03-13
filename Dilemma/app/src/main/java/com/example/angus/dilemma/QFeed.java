@@ -29,6 +29,7 @@ class QFeed {
         this.db = db;
         index = 0;
 
+
         questionCursor = db.query("Question", // a. table
                 qColumns, // b. column names
                 null, // c. selections
