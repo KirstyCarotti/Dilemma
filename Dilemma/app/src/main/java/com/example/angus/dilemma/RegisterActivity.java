@@ -2,10 +2,12 @@ package com.example.angus.dilemma;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(checkFields()){
                     try {
-                        registerUser();
+                        registerUser(); //CHECK RETURN IF TRUE CONTINUE IF FALSE DON'T?
                     }
                     catch(NoSuchAlgorithmException e){
                         e.printStackTrace();
@@ -124,24 +126,30 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerUser() throws NoSuchAlgorithmException, InvalidKeySpecException {
         //get stuff into DB
         email.getText().toString();
-        String username =usern.getText().toString();
+        String username = usern.getText().toString();
 
+        String Query = "SELECT * FROM User WHERE Username =?";
+        Cursor cursor = db.rawQuery(Query, new String[] {username+ ""});
+        if(cursor.getCount() > 0) {
+            cursor.close();
+            Log.d("IDIOT:", username + " already exists");
+            return;
+        } else {
+            Hashing hashed = new Hashing(pass1.getText().toString());
+            String salt = hashed.getSalt();
+            String hashPass = hashed.getHash();
 
-        Hashing hashed = new Hashing( pass1.getText().toString());
-        String salt =hashed.getSalt().toString();
-        String hashPass=hashed.getHash().toString();
+            Log.d("ORIGINAL HASH:", hashPass);
+            Log.d("ORIGINAL SALT:", salt);
 
-        ContentValues qValues = new ContentValues();
-        qValues.put("Username", username);
-        qValues.put("Password", hashPass);
-        qValues.put("Salt", salt);
+            ContentValues qValues = new ContentValues();
+            qValues.put("Username", username);
+            qValues.put("Password", hashPass);
+            qValues.put("Salt", salt);
 
-        // add ID, question, ans1, ans2, category (currently default)
-        long UserID = db.insert("User", null, qValues);
-
-
-
-
-
+            // add ID, question, ans1, ans2, category (currently default)
+            long UserID = db.insert("User", null, qValues); //CHECK IF WORKS
+            Log.d("USERID PRINTED:", String.valueOf(UserID));
+        }
     }
 }

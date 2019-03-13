@@ -56,7 +56,6 @@ public class DBHandler extends SQLiteOpenHelper {
         String delete2 = "DELETE FROM Answer";
         db.execSQL(delete);
         db.execSQL(delete2);
-
     }
 
     @Override

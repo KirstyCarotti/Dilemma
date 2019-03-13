@@ -8,48 +8,48 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 
-
 public class Hashing{
 
+    private byte[] salt = new byte[16];
+    private byte[] hash;
 
-    byte[] salt = new byte[16];
-    byte[] hash;
-
+    //Called when registering
     public Hashing(String plain_Pass) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecureRandom rand = new SecureRandom();
         rand.nextBytes(salt);
-        print(salt);
+        //print(salt);
 
         KeySpec spec = new PBEKeySpec(plain_Pass.toCharArray(), salt, 65536, 128);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
         hash = factory.generateSecret(spec).getEncoded();
-        print(hash);
+        //print(hash);
     }
 
-    public Hashing(String plain_Pass, byte[] salt) throws InvalidKeySpecException, NoSuchAlgorithmException{
-        KeySpec spec = new PBEKeySpec(plain_Pass.toCharArray(), salt, 65536, 128);
+    //Called when logging in
+    public Hashing(String plain_Pass, byte[] theSalt) throws InvalidKeySpecException, NoSuchAlgorithmException{
+        KeySpec spec = new PBEKeySpec(plain_Pass.toCharArray(), theSalt, 65536, 128);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
-        byte[] hash = factory.generateSecret(spec).getEncoded();
-        print(hash);
+        hash = factory.generateSecret(spec).getEncoded();
+        //print(hash);
     }
 
 
-    private void print(byte[] s) {
-
-        for( int i=0;i<s.length;i++) {
-            System.out.print(s[i]);
+    private String print(byte[] s) {
+        String temp= "";
+        for(int i=0; i<s.length; i++) {
+            temp += (char) s[i];
         }
-        System.out.println(" ");
+        return temp;
     }
 
-    public byte[] getSalt(){
-        return salt;
+    public String getSalt(){
+        return print(salt);
     }
 
-    public byte[] getHash(){
-        return hash;
+    public String getHash(){
+        return print(hash);
     }
 
 }
