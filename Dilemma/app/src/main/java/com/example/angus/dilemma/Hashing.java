@@ -8,7 +8,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 
-public class Hashing{
+public class  Hashing{
 
     private byte[] salt = new byte[16];
     private byte[] hash;
