@@ -259,8 +259,8 @@ MainActivity extends AppCompatActivity
         switch(requestCode){
             case LOGIN_RESULT:
                 if (resultCode == RESULT_OK){
-                    //username=(data.getStringExtra("username"));
-                    //userID = data.getIntExtra("userID", -1);
+                    username= data.getStringExtra("username");
+                    userID = data.getIntExtra("userID", -1);
                 }else{
                     Snackbar login_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.login_fail, Snackbar.LENGTH_INDEFINITE);
                     login_fail.setAction("LOGIN", new View.OnClickListener() {

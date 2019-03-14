@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView error;
     SQLiteDatabase db;
     private static final int REGISTER_RESULT = 1;
+    private int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     Intent intent = new Intent();
                     intent.putExtra("username", username.getText().toString());
-                    //userID = LOOKUP UserID AND RETURN HERE
-                    intent.putExtra("userID", /*userID*/ 0 );
+                    intent.putExtra("userID", getUserId());
                     setResult(RESULT_OK, intent);
 
                     finish();
@@ -83,6 +83,14 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(new Intent(this, RegisterActivity.class), REGISTER_RESULT);
     }
 
+    private void setUserId(int i){
+        this.userID = i;
+    }
+
+    private int getUserId(){
+        return userID;
+    }
+
     private boolean checkLogin(){
         db = new DBHandler(this).getWritableDatabase();
         //check login matches db
@@ -94,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
 
             //check if user exists in db
             String Query = "SELECT * FROM User WHERE Username =?";
+
             Cursor cursor = db.rawQuery(Query, new String[] {user+ ""});
             if(cursor.getCount() <= 0) {
                 cursor.close();
@@ -125,7 +134,8 @@ public class LoginActivity extends AppCompatActivity {
             Log.d( "hi","password" + pass);
             Log.d("COMPARING:", "HASHED VALUE: " + hashed_value + " STORED VALUE: " + cursor.getString(2)); //DEFINITELY GETTING RIGHT HASH FROM DB?
 
-            if (hashed_value.equals(cursor.getString(2))) { //.equals()???
+            if (hashed_value.equals(cursor.getString(2))) {
+                setUserId(cursor.getInt(0));
                 cursor.close();
                 return true;
             }
