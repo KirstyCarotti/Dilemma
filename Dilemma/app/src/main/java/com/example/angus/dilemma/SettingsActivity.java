@@ -1,5 +1,7 @@
 package com.example.angus.dilemma;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_s);
         setSupportActionBar(toolbar);
+
 
     }
 }

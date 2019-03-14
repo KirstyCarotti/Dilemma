@@ -1,6 +1,7 @@
 package com.example.angus.dilemma;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,6 +28,13 @@ import android.view.View.OnTouchListener;
 public class
 MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    // Stuff for shared preferences
+    private SharedPreferences sharedpref;
+    private SharedPreferences.Editor prefEdit;
+
+    private CheckBox saveDetails;
+
 
     QFeed qf;
     Question currQ;
