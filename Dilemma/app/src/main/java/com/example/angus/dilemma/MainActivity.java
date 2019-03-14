@@ -1,5 +1,6 @@
 package com.example.angus.dilemma;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
@@ -18,10 +19,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
 public class
 MainActivity extends AppCompatActivity
@@ -29,8 +32,7 @@ MainActivity extends AppCompatActivity
 
     QFeed qf;
     Question currQ;
-    Button left, right;
-    TextView q;
+    TextView q,left,right;
     DBHandler db;
     boolean dbSuccess = false;
     public static final int LOGIN_RESULT = 1;
@@ -39,9 +41,10 @@ MainActivity extends AppCompatActivity
     String username = "";
 
     CardView card;
-    RelativeLayout r_layout;
-    private float xDelta;
-    private float yDelta;
+    LinearLayout r_layout;
+    private float xDelta, yDelta;
+    private float xCard, yCard;
+    private float xDestination = 0f, yDestination = 0f;
 
 
     @Override
@@ -98,27 +101,10 @@ MainActivity extends AppCompatActivity
 
 
         q = (TextView) findViewById(R.id.question);
+        left = (TextView) findViewById(R.id.left);
+        right = (TextView) findViewById(R.id.right);
 
-
-        left = (Button) findViewById(R.id.button_l);
-        left.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //record vote
-                updateQ();
-
-            }
-        });
-
-        right = (Button) findViewById(R.id.button_r);
-        right.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ///record vote
-                updateQ();
-            }
-        });
-
-
-        r_layout = (RelativeLayout) findViewById(R.id.r_layout);
+        r_layout = (LinearLayout) findViewById(R.id.r_layout);
         card = (CardView) findViewById(R.id.cardView);
         card.setOnTouchListener(onTouchListener());
 
@@ -177,7 +163,8 @@ MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            resetDestination();
+            animateCard(card);
         }
     }
 
@@ -224,16 +211,59 @@ MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void snap(View view){
+        resetDestination();
+        if(xCard > 300){
+            xDestination = 2*xCard;
+            //Toast.makeText(MainActivity.this,
+                    //"RIGHT", Toast.LENGTH_SHORT)
+                    //.show();
+
+        } else if(xCard < -300){
+            xDestination = (2*xCard);
+           // Toast.makeText(MainActivity.this,
+                    //"LEFT", Toast.LENGTH_SHORT)
+                    //.show();
+        }
+        if (xDestination!=0){
+            yDestination = (float)2*yCard;
+        }
+
+        animateCard(card);
+
+
+    }
+
+    private void animateCard(View view){
+        ObjectAnimator animationX = ObjectAnimator.ofFloat(view, "translationX", xDestination);
+        ObjectAnimator animationY = ObjectAnimator.ofFloat(view, "translationY", yDestination);
+        animationX.setDuration(200);
+        animationY.setDuration(200);
+        animationX.start();
+        animationY.start();
+    }
+
+
     private OnTouchListener onTouchListener() {
         return new OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
+                xCard = view.getX()-40;
+                yCard = view.getY()-40;
+
                 switch (event.getAction()) {
 
                     case MotionEvent.ACTION_DOWN:
                         xDelta = view.getX() - event.getRawX();
                         yDelta = view.getY() - event.getRawY();
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        snap(view);
+                        Toast.makeText(MainActivity.this,
+                                "x="+xCard+"  y="+yCard, Toast.LENGTH_SHORT)
+                                .show();
                         break;
 
                     case MotionEvent.ACTION_MOVE:
@@ -250,6 +280,12 @@ MainActivity extends AppCompatActivity
             }
         };
     }
+
+    private void resetDestination(){
+        xDestination = 0f;
+        yDestination = 0f;
+    }
+
 
     //switch code to handle any return values from opening pages
     @Override
