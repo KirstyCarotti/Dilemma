@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "Dilemma";
 
     /* DB Constructor */
@@ -60,6 +60,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
         db.execSQL("DROP TABLE IF EXISTS Users");
         db.execSQL("DROP TABLE IF EXISTS Question");
         db.execSQL("DROP TABLE IF EXISTS Preferences");

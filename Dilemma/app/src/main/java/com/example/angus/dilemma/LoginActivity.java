@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -170,6 +172,10 @@ public class LoginActivity extends AppCompatActivity {
             case REGISTER_RESULT:
                 if (resultCode == RESULT_OK){
                     username.setText(data.getStringExtra("user"));
+                }else if(resultCode == RESULT_CANCELED){
+                    String error = "Register failed: "+data.getStringExtra("error");
+                    Snackbar register_fail = Snackbar.make(findViewById(R.id.login_Layout), error, Snackbar.LENGTH_INDEFINITE);
+                    register_fail.show();
                 }
         }
     }

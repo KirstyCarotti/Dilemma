@@ -3,7 +3,9 @@ package com.example.angus.dilemma;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteAbortException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -23,11 +25,16 @@ public class RegisterActivity extends AppCompatActivity {
     TextView user_err, pass_err;
     Button register;
     SQLiteDatabase db;
+    DBHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
 
-        db = new DBHandler(this).getWritableDatabase();
+        dbHandler = new DBHandler(this);
+        db = dbHandler.getWritableDatabase();
+
+        dbHandler.onUpgrade(db, 0, 0);
+        //db = dbHandler.getWritableDatabase();
 
 
         super.onCreate(savedInstanceState);
@@ -139,12 +146,28 @@ public class RegisterActivity extends AppCompatActivity {
         String hashPass = hashed.getHash();
 
         ContentValues qValues = new ContentValues();
+        qValues.put("Salt", salt);
         qValues.put("Username", username);
         qValues.put("Password", hashPass);
-        qValues.put("Salt", salt);
 
-        long UserID = db.insert("User", null, qValues); //CHECK IF WORKS
-        Log.d("USER ID PRINTED:", String.valueOf(UserID));
+
+
+        try{
+            long UserID = db.insert("User", null, qValues); //CHECK IF WORKS
+            Log.d("USER ID PRINTED:", String.valueOf(UserID));
+
+        }catch (SQLiteException e){
+            //try on upgrade
+            dbHandler.onUpgrade(db, 0, 0);
+
+            //end activity in nice way
+            Intent intent = new Intent();
+            intent.putExtra("error", "SQLiteException");
+            setResult(RESULT_CANCELED, intent);
+
+            finish();
+        }
+
 
     }
 }
