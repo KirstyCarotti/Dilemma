@@ -50,6 +50,7 @@ MainActivity extends AppCompatActivity
     public static final int ASK_RESULT = 2;
     int userID;
     String username = "";
+    SQLiteDatabase sqLiteDatabase;
 
     View bin = null;
     Boolean openBin = false;
@@ -68,7 +69,7 @@ MainActivity extends AppCompatActivity
         //---------STARTUP STUFF---------
 
         db = new DBHandler(this);
-        SQLiteDatabase sqLiteDatabase = db.getWritableDatabase();
+        sqLiteDatabase = db.getWritableDatabase();
 
         //db.createDummyQuestions(sqLiteDatabase);
         //db.dummyDelete(sqLiteDatabase);
@@ -133,7 +134,6 @@ MainActivity extends AppCompatActivity
         cardBot = newCard(currQ);
         orderCards();
         updateQ();
-
     }
 
     private View newCard(Question question){
@@ -144,11 +144,11 @@ MainActivity extends AppCompatActivity
         left = card.findViewById(R.id.left);
         right = card.findViewById(R.id.right);
 
-        if(question.qstnID!=-1){
+        if (question.qstnID!=-1) {
             q.setText(question.qstn);
             left.setText(question.ans1);
             right.setText(question.ans2);
-        }else {
+        } else {
             q.setText("No Available Questions");
             left.setText("Refresh");
             right.setText("Refresh");
@@ -193,6 +193,26 @@ MainActivity extends AppCompatActivity
             return false;
         }
     }
+
+    private void voteLeft(){
+        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + currQ.qstnID + ",0)";
+        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + currQ.qstnID + " AND _AnswerID = _QuestionID * 2";
+        sqLiteDatabase.execSQL(vote);
+        sqLiteDatabase.execSQL(click);
+    }
+
+    private void voteRight(){
+        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + currQ.qstnID + ",1)";
+        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + currQ.qstnID + " AND _AnswerID = (_QuestionID * 2)+1";
+        sqLiteDatabase.execSQL(click);
+        sqLiteDatabase.execSQL(vote);
+    }
+
+    private void voteSkip(){
+        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + currQ.qstnID + ",2)";
+        sqLiteDatabase.execSQL(vote);
+    }
+
 
     private void updateQ(){
         if (dbSuccess){
@@ -267,12 +287,14 @@ MainActivity extends AppCompatActivity
             //Toast.makeText(MainActivity.this,
                     //"RIGHT", Toast.LENGTH_SHORT)
                     //.show();
+            voteRight();
 
         } else if(xCard < -300){
             xDestination = (4*xCard);
            // Toast.makeText(MainActivity.this,
                     //"LEFT", Toast.LENGTH_SHORT)
                     //.show();
+            voteLeft();
         }
         if (xDestination!=0){
             yDestination = (float)4*yCard;
