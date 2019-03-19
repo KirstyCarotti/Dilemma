@@ -6,9 +6,12 @@ import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -48,8 +51,12 @@ MainActivity extends AppCompatActivity
     int userID;
     String username = "";
 
-    CardView card;
-    LinearLayout r_layout;
+    View bin = null;
+    Boolean openBin = false;
+    View card;
+    View cardBot;
+    ConstraintLayout cardSpace;
+    LayoutInflater l;
     private float xDelta, yDelta;
     private float xCard, yCard;
     private float xDestination = 0f, yDestination = 0f;
@@ -107,21 +114,70 @@ MainActivity extends AppCompatActivity
 
         //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
 
-
-        q = (TextView) findViewById(R.id.question);
-        left = (TextView) findViewById(R.id.left);
-        right = (TextView) findViewById(R.id.right);
-
-        r_layout = (LinearLayout) findViewById(R.id.r_layout);
-        card = (CardView) findViewById(R.id.cardView);
-        card.setOnTouchListener(onTouchListener());
-
         dbSuccess = qfInit(sqLiteDatabase);
         if (!dbSuccess){
             dbSuccess = qfInit(sqLiteDatabase);
         }
 
-        displayQ();
+        l = getLayoutInflater();
+        cardSpace = findViewById(R.id.cardSpace);
+
+        cardInit();
+
+    }
+
+    private void cardInit(){
+        card = newCard(currQ);
+        updateQ();
+
+        cardBot = newCard(currQ);
+        orderCards();
+        updateQ();
+
+    }
+
+    private View newCard(Question question){
+
+        View card = l.inflate(R.layout.card,  cardSpace, false);
+
+        q = card.findViewById(R.id.question);
+        left = card.findViewById(R.id.left);
+        right = card.findViewById(R.id.right);
+
+        if(question.qstnID!=-1){
+            q.setText(question.qstn);
+            left.setText(question.ans1);
+            right.setText(question.ans2);
+        }else {
+            q.setText("No Available Questions");
+            left.setText("Refresh");
+            right.setText("Refresh");
+        }
+
+        cardSpace.addView(card);
+
+        card.setOnTouchListener(onTouchListener());
+        return card;
+    }
+
+    private void nextCard(){
+        if(openBin){
+            //recast vote
+            openBin= false;
+        }else{
+            cardSpace.removeView(bin);
+            bin = card;
+            card = cardBot;
+            cardBot = newCard(currQ);
+            orderCards();
+            updateQ();
+        }
+    }
+
+    private void orderCards(){
+        card.bringToFront();
+        if (bin != null)
+        bin.bringToFront();
     }
 
     private boolean qfInit(SQLiteDatabase sqLiteDatabase){
@@ -141,27 +197,9 @@ MainActivity extends AppCompatActivity
     private void updateQ(){
         if (dbSuccess){
             currQ = qf.next();
-            displayQ();
         }
         else currQ = new Question(-1,null,null,null);
 
-    }
-
-    private void displayQ(){
-        if(dbSuccess&&currQ.qstnID!=-1){
-            q.setText(currQ.qstn);
-            left.setText(currQ.ans1);
-            right.setText(currQ.ans2);
-        }else if (dbSuccess){
-            q.setText("No Available Questions");
-            left.setText("Refresh");
-            right.setText("Refresh");
-            qf.refresh();
-        } else{
-            q.setText("SQLITE EXCEPTION");
-            left.setText("KILL");
-            right.setText("ME");
-        }
     }
 
     //----------BACK BUTTON WHEN DRAWER OPEN----------
@@ -171,8 +209,11 @@ MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            resetDestination();
-            animateCard(card);
+            if(!openBin){
+                resetDestination();
+                animateCard(bin);
+                openBin=true;
+            }
         }
     }
 
@@ -222,22 +263,23 @@ MainActivity extends AppCompatActivity
     private void snap(View view){
         resetDestination();
         if(xCard > 300){
-            xDestination = 2*xCard;
+            xDestination = 4*xCard;
             //Toast.makeText(MainActivity.this,
                     //"RIGHT", Toast.LENGTH_SHORT)
                     //.show();
 
         } else if(xCard < -300){
-            xDestination = (2*xCard);
+            xDestination = (4*xCard);
            // Toast.makeText(MainActivity.this,
                     //"LEFT", Toast.LENGTH_SHORT)
                     //.show();
         }
         if (xDestination!=0){
-            yDestination = (float)2*yCard;
+            yDestination = (float)4*yCard;
+            nextCard();
         }
 
-        animateCard(card);
+        animateCard(view);
 
 
     }
@@ -245,10 +287,11 @@ MainActivity extends AppCompatActivity
     private void animateCard(View view){
         ObjectAnimator animationX = ObjectAnimator.ofFloat(view, "translationX", xDestination);
         ObjectAnimator animationY = ObjectAnimator.ofFloat(view, "translationY", yDestination);
-        animationX.setDuration(200);
-        animationY.setDuration(200);
+        animationX.setDuration(500);
+        animationY.setDuration(500);
         animationX.start();
         animationY.start();
+        resetDestination();
     }
 
 

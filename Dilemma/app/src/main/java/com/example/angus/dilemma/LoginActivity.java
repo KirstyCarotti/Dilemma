@@ -158,8 +158,8 @@ public class LoginActivity extends AppCompatActivity {
         //do we even let them press back? regardless userID if done so becomes -1 so can easily see when no logged in
         //un-comment below code to allow no login
 
-        //setResult(RESULT_CANCELED, new Intent());
-        //super.onBackPressed();
+        setResult(RESULT_CANCELED, new Intent());
+        super.onBackPressed();
 
     }
 
@@ -173,6 +173,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK){
                     username.setText(data.getStringExtra("user"));
                 }else if(resultCode == RESULT_CANCELED){
+
                     String error = "Register failed: "+data.getStringExtra("error");
                     Snackbar register_fail = Snackbar.make(findViewById(R.id.login_Layout), error, Snackbar.LENGTH_INDEFINITE);
                     register_fail.show();

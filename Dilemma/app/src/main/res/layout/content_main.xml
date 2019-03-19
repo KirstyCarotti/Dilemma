@@ -11,15 +11,15 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:orientation="vertical"
+    android:clipChildren="false"
     >
 
-    <include
-        layout="@layout/card"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cardSpace"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="20dp"
         android:layout_weight="2"
-         />
+        android:clipChildren="false"/>
 
     <LinearLayout
         android:layout_width="match_parent"

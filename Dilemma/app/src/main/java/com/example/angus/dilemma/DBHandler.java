@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
 
-    private static int DATABASE_VERSION = 2;
+    private static int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "Dilemma";
 
     /* DB Constructor */
