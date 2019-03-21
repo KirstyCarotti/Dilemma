@@ -79,6 +79,19 @@ public class LoginActivity extends AppCompatActivity {
                 password.setSelection(password.getText().length());
             }
         });
+
+        CheckBox remember = (CheckBox) findViewById(R.id.remember);
+        remember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isChecked()){
+                    //remember me
+                }else{
+                    // dont
+                }
+
+            }
+        });
     }
 
     private void openRegister(){
