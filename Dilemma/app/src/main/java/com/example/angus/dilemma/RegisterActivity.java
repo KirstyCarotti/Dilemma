@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         dbHandler = new DBHandler(this);
         db = dbHandler.getWritableDatabase();
 
-        dbHandler.onUpgrade(db, 0, 0);
+        //dbHandler.onUpgrade(db, 0, 0);
         //db = dbHandler.getWritableDatabase();
 
 

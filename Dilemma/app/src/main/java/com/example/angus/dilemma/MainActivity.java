@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -67,7 +68,6 @@ MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         //---------STARTUP STUFF---------
-
         db = new DBHandler(this);
         sqLiteDatabase = db.getWritableDatabase();
 
@@ -148,14 +148,15 @@ MainActivity extends AppCompatActivity
             q.setText(question.qstn);
             left.setText(question.ans1);
             right.setText(question.ans2);
+            card.setTag(question.qstnID);
         } else {
             q.setText("No Available Questions");
             left.setText("Refresh");
             right.setText("Refresh");
+            card.setTag(null);
         }
 
         cardSpace.addView(card);
-        card.setTag(question.qstnID);
         card.setOnTouchListener(onTouchListener());
         return card;
     }
@@ -195,22 +196,30 @@ MainActivity extends AppCompatActivity
     }
 
     private void voteLeft(View v){
-        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",0)";
-        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = _QuestionID * 2";
-        sqLiteDatabase.execSQL(vote);
-        sqLiteDatabase.execSQL(click);
+        Log.d("msg",v.getTag().toString());
+        if(v.getTag()!=null) {
+            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",0)";
+            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = _QuestionID * 2";
+            sqLiteDatabase.execSQL(click);
+            sqLiteDatabase.execSQL(vote);
+        }
     }
 
     private void voteRight(View v){
-        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",1)";
-        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = (_QuestionID * 2)+1";
-        sqLiteDatabase.execSQL(click);
-        sqLiteDatabase.execSQL(vote);
+        Log.d("msg",v.getTag().toString());
+        if(v.getTag() != null) {
+            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + ", " + v.getTag() + ", 1)";
+            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = (_QuestionID * 2)+1";
+            sqLiteDatabase.execSQL(click);
+            sqLiteDatabase.execSQL(vote);
+        }
     }
 
     private void voteSkip(View v){
-        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",2)";
-        sqLiteDatabase.execSQL(vote);
+        if(v.getTag()!=null) {
+            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",2)";
+            sqLiteDatabase.execSQL(vote);
+        }
     }
 
 
