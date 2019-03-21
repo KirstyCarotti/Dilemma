@@ -155,7 +155,7 @@ MainActivity extends AppCompatActivity
         }
 
         cardSpace.addView(card);
-
+        card.setTag(question.qstnID);
         card.setOnTouchListener(onTouchListener());
         return card;
     }
@@ -194,22 +194,22 @@ MainActivity extends AppCompatActivity
         }
     }
 
-    private void voteLeft(){
-        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + currQ.qstnID + ",0)";
-        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + currQ.qstnID + " AND _AnswerID = _QuestionID * 2";
+    private void voteLeft(View v){
+        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",0)";
+        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = _QuestionID * 2";
         sqLiteDatabase.execSQL(vote);
         sqLiteDatabase.execSQL(click);
     }
 
-    private void voteRight(){
-        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + currQ.qstnID + ",1)";
-        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + currQ.qstnID + " AND _AnswerID = (_QuestionID * 2)+1";
+    private void voteRight(View v){
+        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",1)";
+        String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = (_QuestionID * 2)+1";
         sqLiteDatabase.execSQL(click);
         sqLiteDatabase.execSQL(vote);
     }
 
-    private void voteSkip(){
-        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + currQ.qstnID + ",2)";
+    private void voteSkip(View v){
+        String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",2)";
         sqLiteDatabase.execSQL(vote);
     }
 
@@ -287,14 +287,14 @@ MainActivity extends AppCompatActivity
             //Toast.makeText(MainActivity.this,
                     //"RIGHT", Toast.LENGTH_SHORT)
                     //.show();
-            voteRight();
+            voteRight(view);
 
         } else if(xCard < -300){
             xDestination = (4*xCard);
            // Toast.makeText(MainActivity.this,
                     //"LEFT", Toast.LENGTH_SHORT)
                     //.show();
-            voteLeft();
+            voteLeft(view);
         }
         if (xDestination!=0){
             yDestination = (float)4*yCard;
