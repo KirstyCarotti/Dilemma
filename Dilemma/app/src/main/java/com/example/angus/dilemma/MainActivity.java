@@ -72,7 +72,6 @@ MainActivity extends AppCompatActivity
         sqLiteDatabase = db.getWritableDatabase();
 
         //db.createDummyQuestions(sqLiteDatabase);
-        //db.dummyDelete(sqLiteDatabase);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -199,7 +198,7 @@ MainActivity extends AppCompatActivity
         Log.d("msg",v.getTag().toString());
         if(v.getTag()!=null) {
             String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",0)";
-            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = _QuestionID * 2";
+            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID % 2 = 1";
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
         }
@@ -209,7 +208,7 @@ MainActivity extends AppCompatActivity
         Log.d("msg",v.getTag().toString());
         if(v.getTag() != null) {
             String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + ", " + v.getTag() + ", 1)";
-            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID = (_QuestionID * 2)+1";
+            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID % 2 = 0";
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
         }

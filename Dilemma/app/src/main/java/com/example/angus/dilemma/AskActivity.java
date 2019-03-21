@@ -62,11 +62,13 @@ public class AskActivity extends AppCompatActivity {
         ContentValues a1Values = new ContentValues();
         a1Values.put("AnswerText", answerText1);
         a1Values.put("_QuestionID", questionID);
+        a1Values.put("NoOfClicks", 0);
         db.insert("Answer", null, a1Values);
 
         ContentValues a2Values = new ContentValues();
         a2Values.put("AnswerText", answerText2);
         a2Values.put("_QuestionID", questionID);
+        a2Values.put("NoOfClicks", 0);
         db.insert("Answer", null, a2Values);
 
         //placeholder action below
