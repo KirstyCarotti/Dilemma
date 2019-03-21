@@ -16,14 +16,16 @@ class QFeed {
     String[] aColumns = {"AnswerText"};
     Cursor answerCursor;
     Cursor questionCursor;
+    Cursor ansQueCursor;
     int qID = -1;
     String qText;
     boolean empty = false;
+    int userID;
 
     //will take in user profile so that appropriate questions are shown
     //eg. dont show own q, don't show answered, filter by tags etc.
-    public QFeed(SQLiteDatabase db){
-
+    public QFeed(SQLiteDatabase db, int userID){
+        this.userID = userID;
         sFirst = new Stack();
         sSecond = new Stack();
         this.db = db;
@@ -32,7 +34,7 @@ class QFeed {
 
         questionCursor = db.query("Question", // a. table
                 qColumns, // b. column names
-                null, // c. selections
+                "_QuestionID NOT IN (SELECT _QuestionID FROM AnsQue WHERE _UserID = " + userID +")",// c. selections
                 null,
                 null, // e. group by
                 null, // f. having
@@ -83,7 +85,10 @@ class QFeed {
             qID = questionCursor.getInt(0);
             qText = questionCursor.getString(1);
             Log.d("QUESTION PRINTED:", qID + qText);
-        } else return new Question(-1,null,null,null);
+
+        } else {
+            return new Question(-1,null,null,null);
+        }
 
         if (!questionCursor.isLast()) {
             questionCursor.moveToNext();

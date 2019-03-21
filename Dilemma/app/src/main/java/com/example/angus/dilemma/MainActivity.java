@@ -183,7 +183,7 @@ MainActivity extends AppCompatActivity
     private boolean qfInit(SQLiteDatabase sqLiteDatabase){
 
         try{
-            qf = new QFeed(sqLiteDatabase);
+            qf = new QFeed(sqLiteDatabase,userID);
             currQ = qf.next();
 
             return true;
