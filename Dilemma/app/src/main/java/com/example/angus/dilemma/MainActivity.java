@@ -67,19 +67,29 @@ MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //---------STARTUP STUFF---------
         db = new DBHandler(this);
         sqLiteDatabase = db.getWritableDatabase();
-
-        //db.createDummyQuestions(sqLiteDatabase);
+         //db.createDummyQuestions(sqLiteDatabase);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        //---------ASK QUESTION BUTTON----------
 
+        fabInit(); // fab = ask question button
+        drawInit();// draw = side menu and top bar
+
+        if(true/*logged in */){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, LOGIN_RESULT);
+        }
+
+        dbSuccess = qfInit(sqLiteDatabase);
+        if (!dbSuccess)dbSuccess = qfInit(sqLiteDatabase);
+
+        cardInit(true); // spawns cards
+    }
+
+    private void fabInit() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,8 +99,11 @@ MainActivity extends AppCompatActivity
                 startActivityForResult(intent, ASK_RESULT);
             }
         });
+    }
 
-        //--------SIDE NAVIGATION DRAWER-----------
+    private void drawInit() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -100,33 +113,18 @@ MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //-------------login stuff here -------------
-
-        //TextView sb_username = (TextView) findViewById(R.id.sidebar_un);
-
-        if(true/*logged in */){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, LOGIN_RESULT);
-        }
-
-
-
-        //-----------UPDATES QUESTION AND ANSWER FIELDS BELOW-----------
-
-        dbSuccess = qfInit(sqLiteDatabase);
-        if (!dbSuccess){
-            dbSuccess = qfInit(sqLiteDatabase);
-        }
-
-        l = getLayoutInflater();
-        cardSpace = findViewById(R.id.cardSpace);
-
-        cardInit();
-
     }
 
-    private void cardInit(){
+    private void cardInit(boolean onStart) {
+        if (onStart){
+            l = getLayoutInflater();
+            cardSpace = findViewById(R.id.cardSpace);
+        }else {
+            cardSpace.removeView(cardBot);
+            cardSpace.removeView(card);
+            cardSpace.removeView(bin);
+        }
+
         card = newCard(currQ);
         updateQ();
 
@@ -147,17 +145,32 @@ MainActivity extends AppCompatActivity
             q.setText(question.qstn);
             left.setText(question.ans1);
             right.setText(question.ans2);
-            card.setTag(question.qstnID);
+            card.setTag(R.id.question_id, question.qstnID);
         } else {
             q.setText("No Available Questions");
             left.setText("Refresh");
             right.setText("Refresh");
-            card.setTag(null);
+            card.setTag(R.id.question_id, -1);
         }
 
+        card.setTag(R.id.voted_state, 0);
         cardSpace.addView(card);
         card.setOnTouchListener(onTouchListener());
         return card;
+    }
+
+    private void updateQ(){
+        if (dbSuccess){
+            currQ = qf.next();
+        }
+        else currQ = new Question(-1,null,null,null);
+
+    }
+
+    private void orderCards(){
+        card.bringToFront();
+        if (bin != null)
+            bin.bringToFront();
     }
 
     private void nextCard(){
@@ -174,12 +187,6 @@ MainActivity extends AppCompatActivity
         }
     }
 
-    private void orderCards(){
-        card.bringToFront();
-        if (bin != null)
-        bin.bringToFront();
-    }
-
     private boolean qfInit(SQLiteDatabase sqLiteDatabase){
 
         try{
@@ -188,27 +195,27 @@ MainActivity extends AppCompatActivity
 
             return true;
         }catch (SQLException e){
-            db.onUpgrade(sqLiteDatabase, 0,0);
+            //db.onUpgrade(sqLiteDatabase, 0,0);
 
             return false;
         }
     }
 
     private void voteLeft(View v){
-        Log.d("msg",v.getTag().toString());
-        if(v.getTag()!=null) {
-            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",0)";
-            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID % 2 = 1";
+        if(!v.getTag(R.id.question_id).equals(-1)) {
+            Log.d("msg","left vote: " +v.getTag(R.id.question_id).toString());
+            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag(R.id.question_id) + ",0)";
+            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag(R.id.question_id) + " AND _AnswerID % 2 = 1";
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
         }
     }
 
     private void voteRight(View v){
-        Log.d("msg",v.getTag().toString());
-        if(v.getTag() != null) {
-            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + ", " + v.getTag() + ", 1)";
-            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag() + " AND _AnswerID % 2 = 0";
+        if(!v.getTag(R.id.question_id).equals(-1)) {
+            Log.d("msg", "right vote: " + v.getTag(R.id.question_id).toString());
+            String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + ", " + v.getTag(R.id.question_id) + ", 1)";
+            String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag(R.id.question_id) + " AND _AnswerID % 2 = 0";
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
         }
@@ -219,15 +226,6 @@ MainActivity extends AppCompatActivity
             String vote = "INSERT INTO AnsQue(_UserID,_QuestionID,AnswerType) VALUES (" + userID + "," + v.getTag() + ",2)";
             sqLiteDatabase.execSQL(vote);
         }
-    }
-
-
-    private void updateQ(){
-        if (dbSuccess){
-            currQ = qf.next();
-        }
-        else currQ = new Question(-1,null,null,null);
-
     }
 
     //----------BACK BUTTON WHEN DRAWER OPEN----------
@@ -244,7 +242,6 @@ MainActivity extends AppCompatActivity
             }
         }
     }
-
 
     //----------IGNORE ME----------
     @Override
@@ -274,6 +271,7 @@ MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_notif) {
 
         } else if (id == R.id.logout) {
+            userID = -1;
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, LOGIN_RESULT);
 
@@ -289,6 +287,8 @@ MainActivity extends AppCompatActivity
     }
 
     private void snap(View view){
+
+
         resetDestination();
         if(xCard > 300){
             xDestination = 4*xCard;
@@ -296,8 +296,8 @@ MainActivity extends AppCompatActivity
                     //"RIGHT", Toast.LENGTH_SHORT)
                     //.show();
             voteRight(view);
-
-        } else if(xCard < -300){
+        }
+        else if(xCard < -300){
             xDestination = (4*xCard);
            // Toast.makeText(MainActivity.this,
                     //"LEFT", Toast.LENGTH_SHORT)
@@ -306,11 +306,10 @@ MainActivity extends AppCompatActivity
         }
         if (xDestination!=0){
             yDestination = (float)4*yCard;
+            view.setTag(R.id.voted_state, 1);
             nextCard();
         }
-
         animateCard(view);
-
 
     }
 
@@ -324,7 +323,6 @@ MainActivity extends AppCompatActivity
         resetDestination();
     }
 
-
     private OnTouchListener onTouchListener() {
         return new OnTouchListener() {
 
@@ -332,6 +330,8 @@ MainActivity extends AppCompatActivity
             public boolean onTouch(View view, MotionEvent event) {
                 xCard = view.getX()-40;
                 yCard = view.getY()-40;
+
+                if (view.getTag(R.id.voted_state).equals(1)  || view.equals(cardBot))  return false;
 
                 switch (event.getAction()) {
 
@@ -367,7 +367,6 @@ MainActivity extends AppCompatActivity
         yDestination = 0f;
     }
 
-
     //switch code to handle any return values from opening pages
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -378,6 +377,9 @@ MainActivity extends AppCompatActivity
                 if (resultCode == RESULT_OK){
                     username= data.getStringExtra("username");
                     userID = data.getIntExtra("userID", -1);
+                    sqLiteDatabase = db.getWritableDatabase();
+                    qfInit(sqLiteDatabase);
+                    cardInit(false);
                 }else{
                     Snackbar login_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.login_fail, Snackbar.LENGTH_INDEFINITE);
                     login_fail.setAction("LOGIN", new View.OnClickListener() {

@@ -171,8 +171,8 @@ public class LoginActivity extends AppCompatActivity {
         //do we even let them press back? regardless userID if done so becomes -1 so can easily see when no logged in
         //un-comment below code to allow no login
 
-        setResult(RESULT_CANCELED, new Intent());
-        super.onBackPressed();
+//        setResult(RESULT_CANCELED, new Intent());
+//        super.onBackPressed();
 
     }
 

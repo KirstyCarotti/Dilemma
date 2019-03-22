@@ -20,22 +20,22 @@ class QFeed {
     int qID = -1;
     String qText;
     boolean empty = false;
-    int userID;
+    String userID;
 
     //will take in user profile so that appropriate questions are shown
     //eg. dont show own q, don't show answered, filter by tags etc.
     public QFeed(SQLiteDatabase db, int userID){
-        this.userID = userID;
+        this.userID = ""+userID;
         sFirst = new Stack();
         sSecond = new Stack();
         this.db = db;
         index = 0;
+        String[] args = {this.userID, this.userID};
 
-
-        questionCursor = db.query("Question", // a. table
+         questionCursor = db.query("Question", // a. table
                 qColumns, // b. column names
-                "_QuestionID NOT IN (SELECT _QuestionID FROM AnsQue WHERE _UserID = " + userID +")",// c. selections
-                null,
+                "_QuestionID NOT IN (SELECT _QuestionID FROM AnsQue WHERE _UserID =?) AND _UserID != ?",// c. selections
+                 args, // selection args
                 null, // e. group by
                 null, // f. having
                 null, // g. order by
@@ -79,7 +79,6 @@ class QFeed {
         //creates Question object from DB
         //filler code until db created
 
-        index++;
 
         if(!empty) {
             qID = questionCursor.getInt(0);
@@ -109,7 +108,7 @@ class QFeed {
         return new Question(
 
                 //Question ID
-                index,
+                qID,
 
                 //Question Text
                 qText,

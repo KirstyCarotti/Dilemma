@@ -158,7 +158,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         }catch (SQLiteException e){
             //try on upgrade
-            dbHandler.onUpgrade(db, 0, 0);
+            //dbHandler.onUpgrade(db, 0, 0);
 
             //end activity in nice way
             Intent intent = new Intent();

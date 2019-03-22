@@ -16,6 +16,7 @@ public class AskActivity extends AppCompatActivity {
     EditText qstn, ans1, ans2;
     Button submit;
     SQLiteDatabase db;
+    int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,8 @@ public class AskActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_a);
         setSupportActionBar(toolbar);
+
+        userID = getIntent().getExtras().getInt("userID");
 
         qstn = (EditText) findViewById(R.id.question_input);
         ans1 = (EditText) findViewById(R.id.answer_input_1);
@@ -49,7 +52,6 @@ public class AskActivity extends AppCompatActivity {
         int categoryID = 0;
 
         //get Profile id somehow later
-        int userID = 0;
 
         ContentValues qValues = new ContentValues();
         qValues.put("_UserID", userID);

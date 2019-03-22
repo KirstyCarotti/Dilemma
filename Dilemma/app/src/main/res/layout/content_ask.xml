@@ -23,7 +23,9 @@
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/options_prompt" />
+        app:layout_constraintTop_toBottomOf="@+id/options_prompt"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null"/>
 
     <TextView
         android:id="@+id/options_prompt"
@@ -102,7 +104,9 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ask_prompt" />
+        app:layout_constraintTop_toBottomOf="@+id/ask_prompt"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null"/>
 
     <EditText
         android:id="@+id/answer_input_1"
@@ -118,7 +122,9 @@
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/options_prompt"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.1"
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null"/>
 
     <TextView
         android:id="@+id/tags_placeholder"
