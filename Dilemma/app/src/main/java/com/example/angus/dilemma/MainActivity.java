@@ -169,8 +169,11 @@ MainActivity extends AppCompatActivity
 
     private void orderCards(){
         card.bringToFront();
-        if (bin != null)
+        card.setElevation(8);
+        if (bin != null){
             bin.bringToFront();
+            bin.setElevation(12);
+        }
     }
 
     private void nextCard(){
