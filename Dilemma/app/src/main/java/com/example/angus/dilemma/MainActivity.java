@@ -3,6 +3,7 @@ package com.example.angus.dilemma;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -69,11 +70,11 @@ MainActivity extends AppCompatActivity
 
         db = new DBHandler(this);
         sqLiteDatabase = db.getWritableDatabase();
-         //db.createDummyQuestions(sqLiteDatabase);
+        //db.onUpgrade(sqLiteDatabase,0,0);
+        //db.createDummyQuestions(sqLiteDatabase);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         fabInit(); // fab = ask question button
         drawInit();// draw = side menu and top bar
@@ -204,6 +205,32 @@ MainActivity extends AppCompatActivity
         }
     }
 
+    private void getResults(View v){
+
+        String results = "SELECT _AnswerID, AnswerText, NoOfClicks FROM Answer WHERE _QuestionID = ?";
+        Cursor cursor = sqLiteDatabase.rawQuery(results, new String[] {v.getTag(R.id.question_id)+ ""});
+
+        cursor.moveToFirst();
+        Integer clicksLeft = cursor.getInt(2);
+        Log.d("clicks left :", clicksLeft.toString());
+
+        cursor.moveToNext();
+        Integer clicksRight = cursor.getInt(2);
+        Log.d("clicks right :", clicksRight.toString());
+
+        float total = clicksLeft + clicksRight;
+        float leftPercent = Math.round((clicksLeft / total)*100);
+        float rightPercent = Math.round((clicksRight / total)*100);
+
+        Log.d("percentage left vote :", Float.toString(leftPercent));
+        Log.d("percentage right vote :", Float.toString(rightPercent));
+
+
+
+
+
+    }
+
     private void voteLeft(View v){
         if(!v.getTag(R.id.question_id).equals(-1)) {
             Log.d("msg","left vote: " +v.getTag(R.id.question_id).toString());
@@ -212,6 +239,7 @@ MainActivity extends AppCompatActivity
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
         }
+        getResults(v);
     }
 
     private void voteRight(View v){
@@ -222,6 +250,7 @@ MainActivity extends AppCompatActivity
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
         }
+        getResults(v);
     }
 
     private void voteSkip(View v){
