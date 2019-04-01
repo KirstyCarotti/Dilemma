@@ -24,8 +24,8 @@
     <!--Ask page-->
     <string name="ask_text">Ask a Question!</string>
     <string name="example_question">What is your favourite colour?</string>
-    <string name="example_ans_left">Red</string>
-    <string name="example_ans_right">Blue</string>
+    <string name="example_ans_left">Blue</string>
+    <string name="example_ans_right">Red</string>
     <string name="confirmation">Your Question has been posted!</string>
     <string name="discard">Question discarded</string>
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -53,6 +54,7 @@ MainActivity extends AppCompatActivity
     int userID;
     String username = "";
     SQLiteDatabase sqLiteDatabase;
+    View top, bot;
 
     View bin = null;
     Boolean openBin = false;
@@ -63,6 +65,7 @@ MainActivity extends AppCompatActivity
     private float xDelta, yDelta;
     private float xCard, yCard;
     private float xDestination = 0f, yDestination = 0f;
+    LinearLayout res_lin;
 
 
     @Override
@@ -79,15 +82,16 @@ MainActivity extends AppCompatActivity
         fabInit(); // fab = ask question button
         drawInit();// draw = side menu and top bar
 
-        if(true/*logged in */){
+        if (true/*logged in */) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, LOGIN_RESULT);
         }
 
         dbSuccess = qfInit(sqLiteDatabase);
-        if (!dbSuccess)dbSuccess = qfInit(sqLiteDatabase);
+        if (!dbSuccess) dbSuccess = qfInit(sqLiteDatabase);
 
         cardInit(true); // spawns cards
+        res_lin = findViewById(R.id.results_main);
     }
 
     private void fabInit() {
@@ -177,6 +181,8 @@ MainActivity extends AppCompatActivity
         }
     }
 
+
+
     private void nextCard(){
         if(openBin){
             //recast vote
@@ -205,30 +211,79 @@ MainActivity extends AppCompatActivity
         }
     }
 
-    private void getResults(View v){
+    private void getResults(View v, String vote){
 
         String results = "SELECT _AnswerID, AnswerText, NoOfClicks FROM Answer WHERE _QuestionID = ?";
         Cursor cursor = sqLiteDatabase.rawQuery(results, new String[] {v.getTag(R.id.question_id)+ ""});
 
         cursor.moveToFirst();
         Integer clicksLeft = cursor.getInt(2);
-        Log.d("clicks left :", clicksLeft.toString());
+        String left_text = cursor.getString(1);
 
         cursor.moveToNext();
         Integer clicksRight = cursor.getInt(2);
-        Log.d("clicks right :", clicksRight.toString());
+        String right_text = cursor.getString(1);
 
         float total = clicksLeft + clicksRight;
-        float leftPercent = Math.round((clicksLeft / total)*100);
-        float rightPercent = Math.round((clicksRight / total)*100);
+        String leftPercent = (int)((clicksLeft / total)*100)+"%";
+        String rightPercent = (int)((clicksRight / total)*100)+"%";
 
-        Log.d("percentage left vote :", Float.toString(leftPercent));
-        Log.d("percentage right vote :", Float.toString(rightPercent));
+        View card = l.inflate(R.layout.result_card, res_lin, false);
 
+        TextView question = card.findViewById(R.id.result_question);
+        TextView left = card.findViewById(R.id.result_left);
+        TextView right = card.findViewById(R.id.result_right);
+        TextView left_p = card.findViewById(R.id.left_percent);
+        TextView right_p = card.findViewById(R.id.right_percent);
 
+        Cursor c = sqLiteDatabase.rawQuery("SELECT Question FROM Question WHERE _QuestionID = ?",
+                new String[] {v.getTag(R.id.question_id)+""});
+        c.moveToFirst();
+        Log.d("cursor", c.getString(0));
 
+        question.setText(c.getString(0));
 
+        left.setText(left_text);
+        right.setText(right_text);
+        left_p.setText(leftPercent);
+        right_p.setText(rightPercent);
 
+        int total_click = clicksRight + clicksLeft;
+
+        if (total_click!=0){
+
+            LinearLayout.LayoutParams leftparams = (LinearLayout.LayoutParams) left.getLayoutParams();
+            float left_weight = (float) clicksLeft / (float) total_click;
+            leftparams.weight = left_weight;
+            Log.d("leftWeight", left_weight+"");
+            left.setLayoutParams(leftparams);
+
+            LinearLayout.LayoutParams rightparams = (LinearLayout.LayoutParams) right.getLayoutParams();
+            float right_weight = (float) clicksRight / (float) total_click;
+            rightparams.weight = right_weight;
+            Log.d("rightWeight", right_weight+"");
+            right.setLayoutParams(rightparams);
+        }
+
+        if( vote == "left"){
+            left.setTypeface(null, Typeface.BOLD);
+            left_p.setTypeface(null, Typeface.BOLD);
+        }
+        else {
+            right.setTypeface(null, Typeface.BOLD);
+            right_p.setTypeface(null, Typeface.BOLD);
+        }
+
+        if(top==null){
+            top = card;
+            res_lin.addView(card);
+        }else {
+            if(bot!=null) res_lin.removeView(bot);
+            res_lin.addView(card);
+            top.bringToFront();
+            bot = top;
+            top = card;
+        }
     }
 
     private void voteLeft(View v){
@@ -238,8 +293,9 @@ MainActivity extends AppCompatActivity
             String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag(R.id.question_id) + " AND _AnswerID % 2 = 1";
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
+            getResults(v, "left");
+
         }
-        getResults(v);
     }
 
     private void voteRight(View v){
@@ -249,8 +305,8 @@ MainActivity extends AppCompatActivity
             String click = "UPDATE Answer SET NoOfClicks = NoOfClicks + 1 WHERE _QuestionID = " + v.getTag(R.id.question_id) + " AND _AnswerID % 2 = 0";
             sqLiteDatabase.execSQL(click);
             sqLiteDatabase.execSQL(vote);
+            getResults(v, "right");
         }
-        getResults(v);
     }
 
     private void voteSkip(View v){
@@ -266,12 +322,6 @@ MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if(!openBin){
-                resetDestination();
-                animateCard(bin);
-                openBin=true;
-            }
         }
     }
 
@@ -299,7 +349,10 @@ MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            //
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.putExtra("userID", userID);
+            startActivity(intent);
+
         } else if (id == R.id.nav_notif) {
 
         } else if (id == R.id.logout) {
@@ -374,9 +427,6 @@ MainActivity extends AppCompatActivity
 
                     case MotionEvent.ACTION_UP:
                         snap(view);
-                        Toast.makeText(MainActivity.this,
-                                "x="+xCard+"  y="+yCard, Toast.LENGTH_SHORT)
-                                .show();
                         break;
 
                     case MotionEvent.ACTION_MOVE:
