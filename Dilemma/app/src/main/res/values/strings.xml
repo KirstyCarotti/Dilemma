@@ -1,0 +1,32 @@
+<resources>
+
+    <!--Titles-->
+    <string name="app_name">Dilemma</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_ask">New Question</string>
+
+    <!--main page-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Username here</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="question_text">Loading Question</string>
+    <string name="ans_left">Left Answer</string>
+    <string name="ans_right">Right Answer</string>
+    <string name="login_fail">You are not logged in</string>
+
+    <!--Settings page-->
+    <string name="settings_text">Settings Go Here</string>
+
+    <!--Ask page-->
+    <string name="ask_text">Ask a Question!</string>
+    <string name="example_question">What is your favourite colour?</string>
+    <string name="example_ans_left">Blue</string>
+    <string name="example_ans_right">Red</string>
+    <string name="confirmation">Your Question has been posted!</string>
+    <string name="discard">Question discarded</string>
+
+</resources>
