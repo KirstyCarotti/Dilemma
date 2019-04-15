@@ -462,6 +462,7 @@ MainActivity extends AppCompatActivity
                     sqLiteDatabase = db.getWritableDatabase();
                     qfInit(sqLiteDatabase);
                     cardInit(false);
+                    res_lin.removeAllViews();
                 }else{
                     Snackbar login_fail = Snackbar.make(findViewById(R.id.drawer_layout), R.string.login_fail, Snackbar.LENGTH_INDEFINITE);
                     login_fail.setAction("LOGIN", new View.OnClickListener() {
